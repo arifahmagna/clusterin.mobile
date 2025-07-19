@@ -1,0 +1,92 @@
+<ion-card-header>
+  <ion-card-title class="laporan-title">Laporan Kunjungan Tamu</ion-card-title>
+</ion-card-header>
+
+<div class="filter-container">
+  <ion-segment [(ngModel)]="selectedTab" color="primary" mode="ios">
+    <ion-segment-button value="checkin">
+      <ion-label>Masuk</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="checkout">
+      <ion-label>Keluar</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <input
+    type="text"
+    placeholder="Cari nama tamu..."
+    [(ngModel)]="searchTerm"
+    class="form-control mt-2"
+  />
+
+  <input
+    type="date"
+    [(ngModel)]="selectedDate"
+    class="form-control mt-2"
+  />
+</div>
+
+
+<!-- CHECK-IN -->
+<div *ngIf="selectedTab === 'checkin'">
+  <div class="judul-kunjungan">
+    <h3>Tamu Masuk</h3>
+    <p>Jumlah: {{ checkInList.length }}</p>
+  </div>
+
+  <ion-card *ngFor="let tamu of filterTamu(checkInList)" class="card-kunjungan card-checkin">
+    <ion-card-header>
+      <ion-card-title>
+        {{ tamu.fullname }} —
+        <span class="status-checkin">{{ tamu.status }}</span>
+      </ion-card-title>
+      <ion-card-subtitle>Update: {{ tamu.updated_at | date: 'medium' }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>NIK:</strong> {{ tamu.nik }}</p>
+      <p><strong>Alamat:</strong> {{ tamu.address }}</p>
+      <p><strong>Tujuan:</strong> {{ tamu.reason }}</p>
+      <p><strong>Alamat Tujuan:</strong> {{ tamu.destination }}</p>
+      <p><strong>Masuk:</strong> {{ combineTanggalJam(tamu.created_at, tamu.checkin) | date: 'medium' }}</p>
+      <p><strong>Estimasi:</strong> {{ tamu.estimation }}</p>
+      <p><strong>Petugas:</strong> {{ tamu.user?.fullname }} ({{ tamu.user?.role }})</p>
+    </ion-card-content>
+  </ion-card>
+</div>
+
+<!-- CHECK-OUT -->
+<div *ngIf="selectedTab === 'checkout'">
+  <div class="judul-kunjungan">
+    <h3>Tamu Keluar</h3>
+    <p>Jumlah: {{ checkOutList.length }}</p>
+  </div>
+
+  <ion-card *ngFor="let tamu of filterTamu(checkOutList)" class="card-kunjungan card-checkout">
+    <ion-card-header>
+      <ion-card-title>
+        {{ tamu.fullname }} —
+        <span class="status-checkout">{{ tamu.status }}</span>
+      </ion-card-title>
+      <ion-card-subtitle>Update: {{ tamu.updated_at | date: 'medium' }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>NIK:</strong> {{ tamu.nik }}</p>
+      <p><strong>Alamat:</strong> {{ tamu.address }}</p>
+      <p><strong>Tujuan:</strong> {{ tamu.reason }}</p>
+      <p><strong>Alamat Tujuan:</strong> {{ tamu.destination }}</p>
+      <p><strong>Masuk:</strong> {{ combineTanggalJam(tamu.created_at, tamu.checkin) | date: 'medium' }}</p>
+      <p><strong>Keluar:</strong> {{ tamu.checkout || '-' }}</p>
+      <!-- <p><strong>Keluar:</strong> 
+  {{ tamu.checkout ? (combineTanggalJam(tamu.updated_at, tamu.checkout) | date: 'medium') : '-' }}
+</p> -->
+
+      <p><strong>Petugas:</strong> {{ tamu.user?.fullname }} ({{ tamu.user?.role }})</p>
+    </ion-card-content>
+  </ion-card>
+</div>
+
+<!-- Tombol Lihat Semua -->
+<div class="ion-text-center mt-3">
+  <ion-button (click)="tampilkanSemua()" *ngIf="!semuaDitampilkan">Lihat Semua</ion-button>
+  <ion-button (click)="sembunyikanSebagian()" *ngIf="semuaDitampilkan">Sembunyikan</ion-button>
+</div>
